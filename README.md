@@ -7,17 +7,25 @@ API](https://apidocs.deno.com/) from applications written in Go. The full API of
 
 ## Installation
 
+<!-- x-release-please-start-version -->
+
 ```go
 import (
 	"github.com/denoland/subhosting-go" // imported as subhosting
 )
 ```
 
+<!-- x-release-please-end -->
+
 Or to pin the version:
+
+<!-- x-release-please-start-version -->
 
 ```sh
 go get -u 'github.com/denoland/subhosting-go@v0.0.1-alpha.0'
 ```
+
+<!-- x-release-please-end -->
 
 ## Requirements
 
