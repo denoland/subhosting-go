@@ -1,9 +1,17 @@
-# Subhosting Go API Library
+# Deno Deploy Subhosting REST API client for Go
 
 <a href="https://pkg.go.dev/github.com/denoland/subhosting-go"><img src="https://pkg.go.dev/badge/github.com/denoland/subhosting-go.svg" alt="Go Reference"></a>
 
-The Subhosting Go library provides convenient access to [the Subhosting REST
-API](https://apidocs.deno.com/) from applications written in Go. The full API of this library can be found in [api.md](api.md).
+This library provides convenient access to the
+[Deno Deploy Subhosting](https://deno.com/subhosting) REST API, which allows you
+to programmatically deploy untrusted, third-party code into the cloud, from Go.
+
+The REST API documentation can be found
+[on apidocs.deno.com](https://apidocs.deno.com/). The full API of this library
+can be found in [api.md](api.md).
+
+To learn more about Subhosting,
+[check out our documentation](https://docs.deno.com/subhosting/manual).
 
 ## Installation
 
@@ -33,7 +41,17 @@ This library requires Go 1.18+.
 
 ## Usage
 
-The full API of this library can be found in [api.md](api.md).
+Before you begin, you'll need to have a Deno Deploy access token and an ID for
+the Deno Deploy organization you're using for Subhosting.
+
+- You can find or create a personal access token
+  [in the dashboard here](https://dash.deno.com/account#access-tokens)
+- Your org ID can be found near the top of the page on your Deno Deploy
+  dashboard [as described here](https://docs.deno.com/subhosting/api)
+
+The code examples below assume your access token is stored in a
+`DEPLOY_ACCESS_TOKEN` environment variable and your Deno Deploy org ID is stored
+in a `DEPLOY_ORG_ID` environment variable.
 
 ```go
 package main
@@ -47,29 +65,30 @@ import (
 )
 
 func main() {
+	org_id := "<My Org Id>"
 	client := subhosting.NewClient(
 		option.WithBearerToken("My Bearer Token"), // defaults to os.LookupEnv("DEPLOY_ACCESS_TOKEN")
 	)
-	organization, err := client.Organizations.Get(context.TODO(), "DEPLOY_ORG_ID")
+	organization, err := client.Organizations.Get(context.TODO(), org_id)
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", organization.ID)
+	fmt.Printf("%+v\n", organization.Name)
 }
-
 ```
 
 ### Request Fields
 
-All request parameters are wrapped in a generic `Field` type,
-which we use to distinguish zero values from null or omitted fields.
+All request parameters are wrapped in a generic `Field` type, which we use to
+distinguish zero values from null or omitted fields.
 
-This prevents accidentally sending a zero value if you forget a required parameter,
-and enables explicitly sending `null`, `false`, `''`, or `0` on optional parameters.
-Any field not specified is not sent.
+This prevents accidentally sending a zero value if you forget a required
+parameter, and enables explicitly sending `null`, `false`, `''`, or `0` on
+optional parameters. Any field not specified is not sent.
 
-To construct fields with values, use the helpers `String()`, `Int()`, `Float()`, or most commonly, the generic `F[T]()`.
-To send a null, use `Null[T]()`, and to send a nonconforming value, use `Raw[T](any)`. For example:
+To construct fields with values, use the helpers `String()`, `Int()`, `Float()`,
+or most commonly, the generic `F[T]()`. To send a null, use `Null[T]()`, and to
+send a nonconforming value, use `Raw[T](any)`. For example:
 
 ```go
 params := FooParams{
@@ -96,8 +115,8 @@ All fields in response structs are value types (not pointers or wrappers).
 If a given field is `null`, not present, or invalid, the corresponding field
 will simply be its zero value.
 
-All response structs also include a special `JSON` field, containing more detailed
-information about each property, which you can use like so:
+All response structs also include a special `JSON` field, containing more
+detailed information about each property, which you can use like so:
 
 ```go
 if res.Name == "" {
@@ -121,10 +140,9 @@ if res.Name == "" {
 }
 ```
 
-These `.JSON` structs also include an `Extras` map containing
-any properties in the json response that were not specified
-in the struct. This can be useful for API features not yet
-present in the SDK.
+These `.JSON` structs also include an `Extras` map containing any properties in
+the json response that were not specified in the struct. This can be useful for
+API features not yet present in the SDK.
 
 ```go
 body := res.JSON.ExtraFields["my_unexpected_field"].Raw()
@@ -151,20 +169,24 @@ client.Organizations.Get(context.TODO(), ...,
 )
 ```
 
-The full list of request options is [here](https://pkg.go.dev/github.com/denoland/subhosting-go/option).
+The full list of request options is
+[here](https://pkg.go.dev/github.com/denoland/subhosting-go/option).
 
 ### Pagination
 
-This library provides some conveniences for working with paginated list endpoints.
+This library provides some conveniences for working with paginated list
+endpoints.
 
-You can use `.ListAutoPaging()` methods to iterate through items across all pages:
+You can use `.ListAutoPaging()` methods to iterate through items across all
+pages:
 
 ```go
 // TODO
 ```
 
-Or you can use simple `.List()` methods to fetch a single page and receive a standard response object
-with additional helper methods like `.GetNextPage()`, e.g.:
+Or you can use simple `.List()` methods to fetch a single page and receive a
+standard response object with additional helper methods like `.GetNextPage()`,
+e.g.:
 
 ```go
 // TODO
@@ -191,15 +213,16 @@ if err != nil {
 }
 ```
 
-When other errors occur, they are returned unwrapped; for example,
-if HTTP transport fails, you might receive `*url.Error` wrapping `*net.OpError`.
+When other errors occur, they are returned unwrapped; for example, if HTTP
+transport fails, you might receive `*url.Error` wrapping `*net.OpError`.
 
 ### Timeouts
 
-Requests do not time out by default; use context to configure a timeout for a request lifecycle.
+Requests do not time out by default; use context to configure a timeout for a
+request lifecycle.
 
-Note that if a request is [retried](#retries), the context timeout does not start over.
-To set a per-retry timeout, use `option.WithRequestTimeout()`.
+Note that if a request is [retried](#retries), the context timeout does not
+start over. To set a per-retry timeout, use `option.WithRequestTimeout()`.
 
 ```go
 // This sets the timeout for the request, including all the retries.
@@ -215,9 +238,9 @@ client.Organizations.Get(
 
 ## Retries
 
-Certain errors will be automatically retried 2 times by default, with a short exponential backoff.
-We retry by default all connection errors, 408 Request Timeout, 409 Conflict, 429 Rate Limit,
-and >=500 Internal errors.
+Certain errors will be automatically retried 2 times by default, with a short
+exponential backoff. We retry by default all connection errors, 408 Request
+Timeout, 409 Conflict, 429 Rate Limit, and >=500 Internal errors.
 
 You can use the `WithMaxRetries` option to configure or disable this:
 
@@ -237,8 +260,8 @@ client.Organizations.Get(
 
 ### Middleware
 
-We provide `option.WithMiddleware` which applies the given
-middleware to requests.
+We provide `option.WithMiddleware` which applies the given middleware to
+requests.
 
 ```go
 func Logger(req *http.Request, next option.MiddlewareNext) (res *http.Response, err error) {
@@ -262,23 +285,30 @@ client := subhosting.NewClient(
 ```
 
 When multiple middlewares are provided as variadic arguments, the middlewares
-are applied left to right. If `option.WithMiddleware` is given
-multiple times, for example first in the client then the method, the
-middleware in the client will run first and the middleware given in the method
-will run next.
+are applied left to right. If `option.WithMiddleware` is given multiple times,
+for example first in the client then the method, the middleware in the client
+will run first and the middleware given in the method will run next.
 
 You may also replace the default `http.Client` with
-`option.WithHTTPClient(client)`. Only one http client is
-accepted (this overwrites any previous client) and receives requests after any
-middleware has been applied.
+`option.WithHTTPClient(client)`. Only one http client is accepted (this
+overwrites any previous client) and receives requests after any middleware has
+been applied.
 
 ## Semantic Versioning
 
-This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) conventions, though certain backwards-incompatible changes may be released as minor versions:
+This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html)
+conventions, though certain backwards-incompatible changes may be released as
+minor versions:
 
-1. Changes to library internals which are technically public but not intended or documented for external use. _(Please open a GitHub issue to let us know if you are relying on such internals)_.
-2. Changes that we do not expect to impact the vast majority of users in practice.
+1. Changes to library internals which are technically public but not intended or
+   documented for external use. _(Please open a GitHub issue to let us know if
+   you are relying on such internals)_.
+2. Changes that we do not expect to impact the vast majority of users in
+   practice.
 
-We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
+We take backwards-compatibility seriously and work hard to ensure you can rely
+on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/denoland/subhosting-go/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an
+[issue](https://www.github.com/denoland/subhosting-go/issues) with questions,
+bugs, or suggestions.
