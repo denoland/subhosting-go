@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 package shared
 
@@ -8,16 +8,16 @@ import (
 
 type UnionTime time.Time
 
-func (UnionTime) ImplementsSharedAnalyticsValue() {}
+func (UnionTime) ImplementsSharedAnalyticsValuesUnion() {}
 
 type UnionString string
 
-func (UnionString) ImplementsSharedAnalyticsValue() {}
+func (UnionString) ImplementsSharedAnalyticsValuesUnion() {}
 
 type UnionBool bool
 
-func (UnionBool) ImplementsSharedAnalyticsValue() {}
+func (UnionBool) ImplementsSharedAnalyticsValuesUnion() {}
 
 type UnionFloat float64
 
-func (UnionFloat) ImplementsSharedAnalyticsValue() {}
+func (UnionFloat) ImplementsSharedAnalyticsValuesUnion() {}

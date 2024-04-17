@@ -1,14 +1,16 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 package subhosting_test
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"testing"
 	"time"
 
 	"github.com/denoland/subhosting-go"
+	"github.com/denoland/subhosting-go/internal"
 	"github.com/denoland/subhosting-go/option"
 )
 
@@ -18,6 +20,26 @@ type closureTransport struct {
 
 func (t *closureTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	return t.fn(req)
+}
+
+func TestUserAgentHeader(t *testing.T) {
+	var userAgent string
+	client := subhosting.NewClient(
+		option.WithHTTPClient(&http.Client{
+			Transport: &closureTransport{
+				fn: func(req *http.Request) (*http.Response, error) {
+					userAgent = req.Header.Get("User-Agent")
+					return &http.Response{
+						StatusCode: http.StatusOK,
+					}, nil
+				},
+			},
+		}),
+	)
+	client.Organizations.Get(context.Background(), "DEPLOY_ORG_ID")
+	if userAgent != fmt.Sprintf("Subhosting/Go %s", internal.PackageVersion) {
+		t.Errorf("Expected User-Agent to be correct, but got: %#v", userAgent)
+	}
 }
 
 func TestRetryAfter(t *testing.T) {

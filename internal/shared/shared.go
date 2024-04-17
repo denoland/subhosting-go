@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 package shared
 
@@ -12,9 +12,9 @@ import (
 
 // Project analytics data
 type Analytics struct {
-	Fields []AnalyticsField   `json:"fields,required"`
-	Values [][]AnalyticsValue `json:"values,required" format:"date-time"`
-	JSON   analyticsJSON      `json:"-"`
+	Fields []AnalyticsField         `json:"fields,required"`
+	Values [][]AnalyticsValuesUnion `json:"values,required" format:"date-time"`
+	JSON   analyticsJSON            `json:"-"`
 }
 
 // analyticsJSON contains the JSON metadata for the struct [Analytics]
@@ -27,6 +27,10 @@ type analyticsJSON struct {
 
 func (r *Analytics) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r analyticsJSON) RawJSON() string {
+	return r.raw
 }
 
 type AnalyticsField struct {
@@ -51,6 +55,10 @@ func (r *AnalyticsField) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func (r analyticsFieldJSON) RawJSON() string {
+	return r.raw
+}
+
 // A data type that analytic data can be represented in.
 //
 // Inspired by Grafana's data types defined at:
@@ -65,15 +73,23 @@ const (
 	AnalyticsFieldsTypeOther   AnalyticsFieldsType = "other"
 )
 
+func (r AnalyticsFieldsType) IsKnown() bool {
+	switch r {
+	case AnalyticsFieldsTypeTime, AnalyticsFieldsTypeNumber, AnalyticsFieldsTypeString, AnalyticsFieldsTypeBoolean, AnalyticsFieldsTypeOther:
+		return true
+	}
+	return false
+}
+
 // Union satisfied by [shared.UnionTime], [shared.UnionFloat],
 // [shared.UnionString], [shared.UnionBool] or [shared.AnalyticsValuesUnknown].
-type AnalyticsValue interface {
-	ImplementsSharedAnalyticsValue()
+type AnalyticsValuesUnion interface {
+	ImplementsSharedAnalyticsValuesUnion()
 }
 
 func init() {
 	apijson.RegisterUnion(
-		reflect.TypeOf((*AnalyticsValue)(nil)).Elem(),
+		reflect.TypeOf((*AnalyticsValuesUnion)(nil)).Elem(),
 		"",
 		apijson.UnionVariant{
 			TypeFilter: gjson.String,
@@ -136,6 +152,10 @@ func (r *Deployment) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func (r deploymentJSON) RawJSON() string {
+	return r.raw
+}
+
 // The status of a deployment.
 type DeploymentStatus string
 
@@ -144,6 +164,14 @@ const (
 	DeploymentStatusPending DeploymentStatus = "pending"
 	DeploymentStatusSuccess DeploymentStatus = "success"
 )
+
+func (r DeploymentStatus) IsKnown() bool {
+	switch r {
+	case DeploymentStatusFailed, DeploymentStatusPending, DeploymentStatusSuccess:
+		return true
+	}
+	return false
+}
 
 type Domain struct {
 	// The ID of the domain.
@@ -165,7 +193,7 @@ type Domain struct {
 	// A deployment ID
 	//
 	// Note that this is not UUID v4, as opposed to organization ID and project ID.
-	DeploymentID string `json:"deploymentId"`
+	DeploymentID string `json:"deploymentId,nullable"`
 	// The ID of the project that the domain is associated with.
 	//
 	// If the domain is not associated with any project, this field is omitted.
@@ -195,6 +223,10 @@ func (r *Domain) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func (r domainJSON) RawJSON() string {
+	return r.raw
+}
+
 type DomainCertificate struct {
 	Cipher    DomainCertificatesCipher `json:"cipher,required"`
 	CreatedAt time.Time                `json:"createdAt,required" format:"date-time"`
@@ -218,12 +250,24 @@ func (r *DomainCertificate) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func (r domainCertificateJSON) RawJSON() string {
+	return r.raw
+}
+
 type DomainCertificatesCipher string
 
 const (
 	DomainCertificatesCipherRsa DomainCertificatesCipher = "rsa"
 	DomainCertificatesCipherEc  DomainCertificatesCipher = "ec"
 )
+
+func (r DomainCertificatesCipher) IsKnown() bool {
+	switch r {
+	case DomainCertificatesCipherRsa, DomainCertificatesCipherEc:
+		return true
+	}
+	return false
+}
 
 type DomainDNSRecord struct {
 	Content string              `json:"content,required"`
@@ -245,142 +289,129 @@ func (r *DomainDNSRecord) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Union satisfied by [shared.DomainProvisioningStatusSuccess],
-// [shared.DomainProvisioningStatusFailed],
-// [shared.DomainProvisioningStatusPending] or
-// [shared.DomainProvisioningStatusManual].
-type DomainProvisioningStatus interface {
-	implementsSharedDomainProvisioningStatus()
+func (r domainDNSRecordJSON) RawJSON() string {
+	return r.raw
 }
 
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*DomainProvisioningStatus)(nil)).Elem(),
-		"code",
-		apijson.UnionVariant{
-			TypeFilter:         gjson.JSON,
-			Type:               reflect.TypeOf(DomainProvisioningStatusSuccess{}),
-			DiscriminatorValue: "success",
-		},
-		apijson.UnionVariant{
-			TypeFilter:         gjson.JSON,
-			Type:               reflect.TypeOf(DomainProvisioningStatusFailed{}),
-			DiscriminatorValue: "failed",
-		},
-		apijson.UnionVariant{
-			TypeFilter:         gjson.JSON,
-			Type:               reflect.TypeOf(DomainProvisioningStatusPending{}),
-			DiscriminatorValue: "pending",
-		},
-		apijson.UnionVariant{
-			TypeFilter:         gjson.JSON,
-			Type:               reflect.TypeOf(DomainProvisioningStatusManual{}),
-			DiscriminatorValue: "manual",
-		},
-	)
+type DomainProvisioningStatus struct {
+	Code    DomainProvisioningStatusCode `json:"code,required"`
+	Message string                       `json:"message"`
+	JSON    domainProvisioningStatusJSON `json:"-"`
+	union   DomainProvisioningStatusUnion
 }
 
-type DomainProvisioningStatusSuccess struct {
-	Code DomainProvisioningStatusSuccessCode `json:"code,required"`
-	JSON domainProvisioningStatusSuccessJSON `json:"-"`
-}
-
-// domainProvisioningStatusSuccessJSON contains the JSON metadata for the struct
-// [DomainProvisioningStatusSuccess]
-type domainProvisioningStatusSuccessJSON struct {
-	Code        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *DomainProvisioningStatusSuccess) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r DomainProvisioningStatusSuccess) implementsSharedDomainProvisioningStatus() {}
-
-type DomainProvisioningStatusSuccessCode string
-
-const (
-	DomainProvisioningStatusSuccessCodeSuccess DomainProvisioningStatusSuccessCode = "success"
-)
-
-type DomainProvisioningStatusFailed struct {
-	Code    DomainProvisioningStatusFailedCode `json:"code,required"`
-	Message string                             `json:"message,required"`
-	JSON    domainProvisioningStatusFailedJSON `json:"-"`
-}
-
-// domainProvisioningStatusFailedJSON contains the JSON metadata for the struct
-// [DomainProvisioningStatusFailed]
-type domainProvisioningStatusFailedJSON struct {
+// domainProvisioningStatusJSON contains the JSON metadata for the struct
+// [DomainProvisioningStatus]
+type domainProvisioningStatusJSON struct {
 	Code        apijson.Field
 	Message     apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *DomainProvisioningStatusFailed) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
+func (r domainProvisioningStatusJSON) RawJSON() string {
+	return r.raw
 }
 
-func (r DomainProvisioningStatusFailed) implementsSharedDomainProvisioningStatus() {}
-
-type DomainProvisioningStatusFailedCode string
-
-const (
-	DomainProvisioningStatusFailedCodeFailed DomainProvisioningStatusFailedCode = "failed"
-)
-
-type DomainProvisioningStatusPending struct {
-	Code DomainProvisioningStatusPendingCode `json:"code,required"`
-	JSON domainProvisioningStatusPendingJSON `json:"-"`
+func (r *DomainProvisioningStatus) UnmarshalJSON(data []byte) (err error) {
+	err = apijson.UnmarshalRoot(data, &r.union)
+	if err != nil {
+		return err
+	}
+	return apijson.Port(r.union, &r)
 }
 
-// domainProvisioningStatusPendingJSON contains the JSON metadata for the struct
-// [DomainProvisioningStatusPending]
-type domainProvisioningStatusPendingJSON struct {
+func (r DomainProvisioningStatus) AsUnion() DomainProvisioningStatusUnion {
+	return r.union
+}
+
+// Union satisfied by [shared.DomainProvisioningStatusObject],
+// [shared.DomainProvisioningStatusObject], [shared.DomainProvisioningStatusObject]
+// or [shared.DomainProvisioningStatusObject].
+type DomainProvisioningStatusUnion interface {
+	implementsSharedDomainProvisioningStatus()
+}
+
+func init() {
+	apijson.RegisterUnion(
+		reflect.TypeOf((*DomainProvisioningStatusUnion)(nil)).Elem(),
+		"code",
+		apijson.UnionVariant{
+			TypeFilter:         gjson.JSON,
+			Type:               reflect.TypeOf(DomainProvisioningStatusObject{}),
+			DiscriminatorValue: "success",
+		},
+		apijson.UnionVariant{
+			TypeFilter:         gjson.JSON,
+			Type:               reflect.TypeOf(DomainProvisioningStatusObject{}),
+			DiscriminatorValue: "failed",
+		},
+		apijson.UnionVariant{
+			TypeFilter:         gjson.JSON,
+			Type:               reflect.TypeOf(DomainProvisioningStatusObject{}),
+			DiscriminatorValue: "pending",
+		},
+		apijson.UnionVariant{
+			TypeFilter:         gjson.JSON,
+			Type:               reflect.TypeOf(DomainProvisioningStatusObject{}),
+			DiscriminatorValue: "manual",
+		},
+	)
+}
+
+type DomainProvisioningStatusObject struct {
+	Code DomainProvisioningStatusObjectCode `json:"code,required"`
+	JSON domainProvisioningStatusObjectJSON `json:"-"`
+}
+
+// domainProvisioningStatusObjectJSON contains the JSON metadata for the struct
+// [DomainProvisioningStatusObject]
+type domainProvisioningStatusObjectJSON struct {
 	Code        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *DomainProvisioningStatusPending) UnmarshalJSON(data []byte) (err error) {
+func (r *DomainProvisioningStatusObject) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r DomainProvisioningStatusPending) implementsSharedDomainProvisioningStatus() {}
+func (r domainProvisioningStatusObjectJSON) RawJSON() string {
+	return r.raw
+}
 
-type DomainProvisioningStatusPendingCode string
+func (r DomainProvisioningStatusObject) implementsSharedDomainProvisioningStatus() {}
+
+type DomainProvisioningStatusObjectCode string
 
 const (
-	DomainProvisioningStatusPendingCodePending DomainProvisioningStatusPendingCode = "pending"
+	DomainProvisioningStatusObjectCodeSuccess DomainProvisioningStatusObjectCode = "success"
 )
 
-type DomainProvisioningStatusManual struct {
-	Code DomainProvisioningStatusManualCode `json:"code,required"`
-	JSON domainProvisioningStatusManualJSON `json:"-"`
+func (r DomainProvisioningStatusObjectCode) IsKnown() bool {
+	switch r {
+	case DomainProvisioningStatusObjectCodeSuccess:
+		return true
+	}
+	return false
 }
 
-// domainProvisioningStatusManualJSON contains the JSON metadata for the struct
-// [DomainProvisioningStatusManual]
-type domainProvisioningStatusManualJSON struct {
-	Code        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *DomainProvisioningStatusManual) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r DomainProvisioningStatusManual) implementsSharedDomainProvisioningStatus() {}
-
-type DomainProvisioningStatusManualCode string
+type DomainProvisioningStatusCode string
 
 const (
-	DomainProvisioningStatusManualCodeManual DomainProvisioningStatusManualCode = "manual"
+	DomainProvisioningStatusCodeSuccess DomainProvisioningStatusCode = "success"
+	DomainProvisioningStatusCodeFailed  DomainProvisioningStatusCode = "failed"
+	DomainProvisioningStatusCodePending DomainProvisioningStatusCode = "pending"
+	DomainProvisioningStatusCodeManual  DomainProvisioningStatusCode = "manual"
 )
+
+func (r DomainProvisioningStatusCode) IsKnown() bool {
+	switch r {
+	case DomainProvisioningStatusCodeSuccess, DomainProvisioningStatusCodeFailed, DomainProvisioningStatusCodePending, DomainProvisioningStatusCodeManual:
+		return true
+	}
+	return false
+}
 
 type KvDatabase struct {
 	// A KV database ID
@@ -409,6 +440,10 @@ func (r *KvDatabase) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func (r kvDatabaseJSON) RawJSON() string {
+	return r.raw
+}
+
 type Project struct {
 	ID          string      `json:"id,required" format:"uuid"`
 	CreatedAt   time.Time   `json:"createdAt,required" format:"date-time"`
@@ -431,4 +466,8 @@ type projectJSON struct {
 
 func (r *Project) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectJSON) RawJSON() string {
+	return r.raw
 }
