@@ -5,6 +5,8 @@
 The Subhosting Go library provides convenient access to [the Subhosting REST
 API](https://apidocs.deno.com/) from applications written in Go. The full API of this library can be found in [api.md](api.md).
 
+It is generated with [Stainless](https://www.stainlessapi.com/).
+
 ## Installation
 
 <!-- x-release-please-start-version -->
@@ -59,7 +61,7 @@ func main() {
 
 ```
 
-### Request Fields
+### Request fields
 
 All request parameters are wrapped in a generic `Field` type,
 which we use to distinguish zero values from null or omitted fields.
@@ -89,7 +91,7 @@ params := FooParams{
 }
 ```
 
-### Response Objects
+### Response objects
 
 All fields in response structs are value types (not pointers or wrappers).
 
@@ -159,16 +161,8 @@ This library provides some conveniences for working with paginated list endpoint
 
 You can use `.ListAutoPaging()` methods to iterate through items across all pages:
 
-```go
-// TODO
-```
-
 Or you can use simple `.List()` methods to fetch a single page and receive a standard response object
 with additional helper methods like `.GetNextPage()`, e.g.:
-
-```go
-// TODO
-```
 
 ### Errors
 
@@ -213,7 +207,20 @@ client.Organizations.Get(
 )
 ```
 
-## Retries
+### File uploads
+
+Request parameters that correspond to file uploads in multipart requests are typed as
+`param.Field[io.Reader]`. The contents of the `io.Reader` will by default be sent as a multipart form
+part with the file name of "anonymous_file" and content-type of "application/octet-stream".
+
+The file name and content-type can be customized by implementing `Name() string` or `ContentType()
+string` on the run-time type of `io.Reader`. Note that `os.File` implements `Name() string`, so a
+file returned by `os.Open` will be sent with the file name on disk.
+
+We also provide a helper `subhosting.FileParam(reader io.Reader, filename string, contentType string)`
+which can be used to wrap any `io.Reader` with the appropriate file name and content type.
+
+### Retries
 
 Certain errors will be automatically retried 2 times by default, with a short exponential backoff.
 We retry by default all connection errors, 408 Request Timeout, 409 Conflict, 429 Rate Limit,
@@ -234,6 +241,55 @@ client.Organizations.Get(
 	option.WithMaxRetries(5),
 )
 ```
+
+### Making custom/undocumented requests
+
+This library is typed for convenient access to the documented API. If you need to access undocumented
+endpoints, params, or response properties, the library can still be used.
+
+#### Undocumented endpoints
+
+To make requests to undocumented endpoints, you can use `client.Get`, `client.Post`, and other HTTP verbs.
+`RequestOptions` on the client, such as retries, will be respected when making these requests.
+
+```go
+var (
+    // params can be an io.Reader, a []byte, an encoding/json serializable object,
+    // or a "…Params" struct defined in this library.
+    params map[string]interface{}
+
+    // result can be an []byte, *http.Response, a encoding/json deserializable object,
+    // or a model defined in this library.
+    result *http.Response
+)
+err := client.Post(context.Background(), "/unspecified", params, &result)
+if err != nil {
+    …
+}
+```
+
+#### Undocumented request params
+
+To make requests using undocumented parameters, you may use either the `option.WithQuerySet()`
+or the `option.WithJSONSet()` methods.
+
+```go
+params := FooNewParams{
+    ID:   subhosting.F("id_xxxx"),
+    Data: subhosting.F(FooNewParamsData{
+        FirstName: subhosting.F("John"),
+    }),
+}
+client.Foo.New(context.Background(), params, option.WithJSONSet("data.last_name", "Doe"))
+```
+
+#### Undocumented response properties
+
+To access undocumented response properties, you may either access the raw JSON of the response as a string
+with `result.JSON.RawJSON()`, or get the raw JSON of a particular field on the result with
+`result.JSON.Foo.Raw()`.
+
+Any fields that are not present on the response struct will be saved and can be accessed by `result.JSON.ExtraFields()` which returns the extra fields as a `map[string]Field`.
 
 ### Middleware
 
@@ -272,7 +328,7 @@ You may also replace the default `http.Client` with
 accepted (this overwrites any previous client) and receives requests after any
 middleware has been applied.
 
-## Semantic Versioning
+## Semantic versioning
 
 This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) conventions, though certain backwards-incompatible changes may be released as minor versions:
 
