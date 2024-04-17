@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 package subhosting
 
@@ -76,7 +76,7 @@ type ProjectDeploymentNewParams struct {
 	// Assets that were uploaded in some of the previous deployments don't need to be
 	// uploaded again. In this case, in order to identify the asset, just provide the
 	// SHA-1 hash of the content.
-	Assets param.Field[map[string]ProjectDeploymentNewParamsAssets] `json:"assets,required"`
+	Assets param.Field[map[string]ProjectDeploymentNewParamsAssetsUnion] `json:"assets,required"`
 	// An URL of the entry point of the application. This is the file that will be
 	// executed when the deployment is invoked.
 	EntryPointURL param.Field[string] `json:"entryPointUrl,required"`
@@ -132,54 +132,97 @@ func (r ProjectDeploymentNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Satisfied by [ProjectDeploymentNewParamsAssetsFile],
-// [ProjectDeploymentNewParamsAssetsSymlink].
-type ProjectDeploymentNewParamsAssets interface {
-	implementsProjectDeploymentNewParamsAssets()
+type ProjectDeploymentNewParamsAssets struct {
+	Content  param.Field[string]                                   `json:"content"`
+	Encoding param.Field[ProjectDeploymentNewParamsAssetsEncoding] `json:"encoding"`
+	GitSha1  param.Field[string]                                   `json:"gitSha1"`
+	Kind     param.Field[ProjectDeploymentNewParamsAssetsKind]     `json:"kind,required"`
+	Target   param.Field[string]                                   `json:"target"`
 }
 
-type ProjectDeploymentNewParamsAssetsFile struct {
-	Kind     param.Field[ProjectDeploymentNewParamsAssetsFileKind]     `json:"kind,required"`
-	Content  param.Field[string]                                       `json:"content"`
-	Encoding param.Field[ProjectDeploymentNewParamsAssetsFileEncoding] `json:"encoding"`
-	GitSha1  param.Field[string]                                       `json:"gitSha1"`
-}
-
-func (r ProjectDeploymentNewParamsAssetsFile) MarshalJSON() (data []byte, err error) {
+func (r ProjectDeploymentNewParamsAssets) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r ProjectDeploymentNewParamsAssetsFile) implementsProjectDeploymentNewParamsAssets() {}
+func (r ProjectDeploymentNewParamsAssets) implementsProjectDeploymentNewParamsAssetsUnion() {}
 
-type ProjectDeploymentNewParamsAssetsFileKind string
-
-const (
-	ProjectDeploymentNewParamsAssetsFileKindFile ProjectDeploymentNewParamsAssetsFileKind = "file"
-)
-
-type ProjectDeploymentNewParamsAssetsFileEncoding string
-
-const (
-	ProjectDeploymentNewParamsAssetsFileEncodingUtf8   ProjectDeploymentNewParamsAssetsFileEncoding = "utf-8"
-	ProjectDeploymentNewParamsAssetsFileEncodingBase64 ProjectDeploymentNewParamsAssetsFileEncoding = "base64"
-)
-
-type ProjectDeploymentNewParamsAssetsSymlink struct {
-	Kind   param.Field[ProjectDeploymentNewParamsAssetsSymlinkKind] `json:"kind,required"`
-	Target param.Field[string]                                      `json:"target,required"`
+// Satisfied by [ProjectDeploymentNewParamsAssetsObject],
+// [ProjectDeploymentNewParamsAssetsObject], [ProjectDeploymentNewParamsAssets].
+type ProjectDeploymentNewParamsAssetsUnion interface {
+	implementsProjectDeploymentNewParamsAssetsUnion()
 }
 
-func (r ProjectDeploymentNewParamsAssetsSymlink) MarshalJSON() (data []byte, err error) {
+type ProjectDeploymentNewParamsAssetsObject struct {
+	Kind     param.Field[ProjectDeploymentNewParamsAssetsObjectKind]     `json:"kind,required"`
+	Content  param.Field[string]                                         `json:"content"`
+	Encoding param.Field[ProjectDeploymentNewParamsAssetsObjectEncoding] `json:"encoding"`
+	GitSha1  param.Field[string]                                         `json:"gitSha1"`
+}
+
+func (r ProjectDeploymentNewParamsAssetsObject) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r ProjectDeploymentNewParamsAssetsSymlink) implementsProjectDeploymentNewParamsAssets() {}
+func (r ProjectDeploymentNewParamsAssetsObject) implementsProjectDeploymentNewParamsAssetsUnion() {}
 
-type ProjectDeploymentNewParamsAssetsSymlinkKind string
+type ProjectDeploymentNewParamsAssetsObjectKind string
 
 const (
-	ProjectDeploymentNewParamsAssetsSymlinkKindSymlink ProjectDeploymentNewParamsAssetsSymlinkKind = "symlink"
+	ProjectDeploymentNewParamsAssetsObjectKindFile ProjectDeploymentNewParamsAssetsObjectKind = "file"
 )
+
+func (r ProjectDeploymentNewParamsAssetsObjectKind) IsKnown() bool {
+	switch r {
+	case ProjectDeploymentNewParamsAssetsObjectKindFile:
+		return true
+	}
+	return false
+}
+
+type ProjectDeploymentNewParamsAssetsObjectEncoding string
+
+const (
+	ProjectDeploymentNewParamsAssetsObjectEncodingUtf8   ProjectDeploymentNewParamsAssetsObjectEncoding = "utf-8"
+	ProjectDeploymentNewParamsAssetsObjectEncodingBase64 ProjectDeploymentNewParamsAssetsObjectEncoding = "base64"
+)
+
+func (r ProjectDeploymentNewParamsAssetsObjectEncoding) IsKnown() bool {
+	switch r {
+	case ProjectDeploymentNewParamsAssetsObjectEncodingUtf8, ProjectDeploymentNewParamsAssetsObjectEncodingBase64:
+		return true
+	}
+	return false
+}
+
+type ProjectDeploymentNewParamsAssetsEncoding string
+
+const (
+	ProjectDeploymentNewParamsAssetsEncodingUtf8   ProjectDeploymentNewParamsAssetsEncoding = "utf-8"
+	ProjectDeploymentNewParamsAssetsEncodingBase64 ProjectDeploymentNewParamsAssetsEncoding = "base64"
+)
+
+func (r ProjectDeploymentNewParamsAssetsEncoding) IsKnown() bool {
+	switch r {
+	case ProjectDeploymentNewParamsAssetsEncodingUtf8, ProjectDeploymentNewParamsAssetsEncodingBase64:
+		return true
+	}
+	return false
+}
+
+type ProjectDeploymentNewParamsAssetsKind string
+
+const (
+	ProjectDeploymentNewParamsAssetsKindFile    ProjectDeploymentNewParamsAssetsKind = "file"
+	ProjectDeploymentNewParamsAssetsKindSymlink ProjectDeploymentNewParamsAssetsKind = "symlink"
+)
+
+func (r ProjectDeploymentNewParamsAssetsKind) IsKnown() bool {
+	switch r {
+	case ProjectDeploymentNewParamsAssetsKindFile, ProjectDeploymentNewParamsAssetsKindSymlink:
+		return true
+	}
+	return false
+}
 
 // Compiler options to be used when building the deployment.
 //

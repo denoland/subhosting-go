@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 package subhosting
 
@@ -41,7 +41,7 @@ const AnalyticsFieldsTypeBoolean = shared.AnalyticsFieldsTypeBoolean
 const AnalyticsFieldsTypeOther = shared.AnalyticsFieldsTypeOther
 
 // This is an alias to an internal type.
-type AnalyticsValue = shared.AnalyticsValue
+type AnalyticsValuesUnion = shared.AnalyticsValuesUnion
 
 // This is an alias to an internal type.
 type Deployment = shared.Deployment
@@ -82,40 +82,28 @@ type DomainDNSRecord = shared.DomainDNSRecord
 type DomainProvisioningStatus = shared.DomainProvisioningStatus
 
 // This is an alias to an internal type.
-type DomainProvisioningStatusSuccess = shared.DomainProvisioningStatusSuccess
+type DomainProvisioningStatusObject = shared.DomainProvisioningStatusObject
 
 // This is an alias to an internal type.
-type DomainProvisioningStatusSuccessCode = shared.DomainProvisioningStatusSuccessCode
+type DomainProvisioningStatusObjectCode = shared.DomainProvisioningStatusObjectCode
 
 // This is an alias to an internal value.
-const DomainProvisioningStatusSuccessCodeSuccess = shared.DomainProvisioningStatusSuccessCodeSuccess
+const DomainProvisioningStatusObjectCodeSuccess = shared.DomainProvisioningStatusObjectCodeSuccess
 
 // This is an alias to an internal type.
-type DomainProvisioningStatusFailed = shared.DomainProvisioningStatusFailed
-
-// This is an alias to an internal type.
-type DomainProvisioningStatusFailedCode = shared.DomainProvisioningStatusFailedCode
+type DomainProvisioningStatusCode = shared.DomainProvisioningStatusCode
 
 // This is an alias to an internal value.
-const DomainProvisioningStatusFailedCodeFailed = shared.DomainProvisioningStatusFailedCodeFailed
-
-// This is an alias to an internal type.
-type DomainProvisioningStatusPending = shared.DomainProvisioningStatusPending
-
-// This is an alias to an internal type.
-type DomainProvisioningStatusPendingCode = shared.DomainProvisioningStatusPendingCode
+const DomainProvisioningStatusCodeSuccess = shared.DomainProvisioningStatusCodeSuccess
 
 // This is an alias to an internal value.
-const DomainProvisioningStatusPendingCodePending = shared.DomainProvisioningStatusPendingCodePending
-
-// This is an alias to an internal type.
-type DomainProvisioningStatusManual = shared.DomainProvisioningStatusManual
-
-// This is an alias to an internal type.
-type DomainProvisioningStatusManualCode = shared.DomainProvisioningStatusManualCode
+const DomainProvisioningStatusCodeFailed = shared.DomainProvisioningStatusCodeFailed
 
 // This is an alias to an internal value.
-const DomainProvisioningStatusManualCodeManual = shared.DomainProvisioningStatusManualCodeManual
+const DomainProvisioningStatusCodePending = shared.DomainProvisioningStatusCodePending
+
+// This is an alias to an internal value.
+const DomainProvisioningStatusCodeManual = shared.DomainProvisioningStatusCodeManual
 
 // This is an alias to an internal type.
 type KvDatabase = shared.KvDatabase

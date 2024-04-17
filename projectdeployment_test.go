@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 package subhosting_test
 
@@ -29,29 +29,29 @@ func TestProjectDeploymentNewWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
 		subhosting.ProjectDeploymentNewParams{
-			Assets: subhosting.F(map[string]subhosting.ProjectDeploymentNewParamsAssets{
-				"main.ts": subhosting.ProjectDeploymentNewParamsAssetsFile(subhosting.ProjectDeploymentNewParamsAssetsFile{
+			Assets: subhosting.F(map[string]subhosting.ProjectDeploymentNewParamsAssetsUnion{
+				"main.ts": subhosting.ProjectDeploymentNewParamsAssetsObject{
 					Content:  subhosting.F("Deno.serve((req: Request) => new Response(\"Hello World\"));\n"),
-					Encoding: subhosting.F(subhosting.ProjectDeploymentNewParamsAssetsFileEncodingUtf8),
+					Encoding: subhosting.F(subhosting.ProjectDeploymentNewParamsAssetsObjectEncodingUtf8),
 					GitSha1:  subhosting.F("string"),
-					Kind:     subhosting.F(subhosting.ProjectDeploymentNewParamsAssetsFileKindFile),
-				}),
-				"images/cat1.png": subhosting.ProjectDeploymentNewParamsAssetsFile(subhosting.ProjectDeploymentNewParamsAssetsFile{
+					Kind:     subhosting.F(subhosting.ProjectDeploymentNewParamsAssetsObjectKindFile),
+				},
+				"images/cat1.png": subhosting.ProjectDeploymentNewParamsAssetsObject{
 					Content:  subhosting.F("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk"),
-					Encoding: subhosting.F(subhosting.ProjectDeploymentNewParamsAssetsFileEncodingBase64),
+					Encoding: subhosting.F(subhosting.ProjectDeploymentNewParamsAssetsObjectEncodingBase64),
 					GitSha1:  subhosting.F("string"),
-					Kind:     subhosting.F(subhosting.ProjectDeploymentNewParamsAssetsFileKindFile),
-				}),
-				"images/cat2.png": subhosting.ProjectDeploymentNewParamsAssetsFile(subhosting.ProjectDeploymentNewParamsAssetsFile{
+					Kind:     subhosting.F(subhosting.ProjectDeploymentNewParamsAssetsObjectKindFile),
+				},
+				"images/cat2.png": subhosting.ProjectDeploymentNewParamsAssetsObject{
 					Content:  subhosting.F("string"),
-					Encoding: subhosting.F(subhosting.ProjectDeploymentNewParamsAssetsFileEncodingUtf8),
+					Encoding: subhosting.F(subhosting.ProjectDeploymentNewParamsAssetsObjectEncodingUtf8),
 					GitSha1:  subhosting.F("5c4f8729e5c30a91a890e24d7285e89f418c637b"),
-					Kind:     subhosting.F(subhosting.ProjectDeploymentNewParamsAssetsFileKindFile),
-				}),
-				"symlink.png": subhosting.ProjectDeploymentNewParamsAssetsSymlink(subhosting.ProjectDeploymentNewParamsAssetsSymlink{
+					Kind:     subhosting.F(subhosting.ProjectDeploymentNewParamsAssetsObjectKindFile),
+				},
+				"symlink.png": subhosting.ProjectDeploymentNewParamsAssetsObject{
 					Target: subhosting.F("images/cat1.png"),
-					Kind:   subhosting.F(subhosting.ProjectDeploymentNewParamsAssetsSymlinkKindSymlink),
-				}),
+					Kind:   subhosting.F(subhosting.ProjectDeploymentNewParamsAssetsObjectKindSymlink),
+				},
 			}),
 			EntryPointURL: subhosting.F("main.ts"),
 			EnvVars: subhosting.F(map[string]string{

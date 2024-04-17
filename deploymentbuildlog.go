@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 package subhosting
 
@@ -63,4 +63,8 @@ type deploymentBuildLogGetResponseJSON struct {
 
 func (r *DeploymentBuildLogGetResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r deploymentBuildLogGetResponseJSON) RawJSON() string {
+	return r.raw
 }

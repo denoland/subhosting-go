@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 package subhosting
 
@@ -51,9 +51,9 @@ func (r *DeploymentAppLogService) Get(ctx context.Context, deploymentID string, 
 }
 
 type DeploymentAppLogGetResponse struct {
-	Level   DeploymentAppLogGetResponseLevel  `json:"level,required"`
+	Level   DeploymentAppLogGetResponseLevel  `json:"level,required,nullable"`
 	Message string                            `json:"message,required"`
-	Region  DeploymentAppLogGetResponseRegion `json:"region,required"`
+	Region  DeploymentAppLogGetResponseRegion `json:"region,required,nullable"`
 	// Log timestamp
 	Time time.Time                       `json:"time,required" format:"date-time"`
 	JSON deploymentAppLogGetResponseJSON `json:"-"`
@@ -74,6 +74,10 @@ func (r *DeploymentAppLogGetResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func (r deploymentAppLogGetResponseJSON) RawJSON() string {
+	return r.raw
+}
+
 type DeploymentAppLogGetResponseLevel string
 
 const (
@@ -82,6 +86,14 @@ const (
 	DeploymentAppLogGetResponseLevelInfo    DeploymentAppLogGetResponseLevel = "info"
 	DeploymentAppLogGetResponseLevelDebug   DeploymentAppLogGetResponseLevel = "debug"
 )
+
+func (r DeploymentAppLogGetResponseLevel) IsKnown() bool {
+	switch r {
+	case DeploymentAppLogGetResponseLevelError, DeploymentAppLogGetResponseLevelWarning, DeploymentAppLogGetResponseLevelInfo, DeploymentAppLogGetResponseLevelDebug:
+		return true
+	}
+	return false
+}
 
 type DeploymentAppLogGetResponseRegion string
 
@@ -121,6 +133,14 @@ const (
 	DeploymentAppLogGetResponseRegionGcpUsWest3                DeploymentAppLogGetResponseRegion = "gcp-us-west3"
 	DeploymentAppLogGetResponseRegionGcpUsWest4                DeploymentAppLogGetResponseRegion = "gcp-us-west4"
 )
+
+func (r DeploymentAppLogGetResponseRegion) IsKnown() bool {
+	switch r {
+	case DeploymentAppLogGetResponseRegionGcpAsiaEast1, DeploymentAppLogGetResponseRegionGcpAsiaEast2, DeploymentAppLogGetResponseRegionGcpAsiaNortheast1, DeploymentAppLogGetResponseRegionGcpAsiaNortheast2, DeploymentAppLogGetResponseRegionGcpAsiaNortheast3, DeploymentAppLogGetResponseRegionGcpAsiaSouth1, DeploymentAppLogGetResponseRegionGcpAsiaSouth2, DeploymentAppLogGetResponseRegionGcpAsiaSoutheast1, DeploymentAppLogGetResponseRegionGcpAsiaSoutheast2, DeploymentAppLogGetResponseRegionGcpAustraliaSoutheast1, DeploymentAppLogGetResponseRegionGcpAustraliaSoutheast2, DeploymentAppLogGetResponseRegionGcpEuropeCentral2, DeploymentAppLogGetResponseRegionGcpEuropeNorth1, DeploymentAppLogGetResponseRegionGcpEuropeSouthwest1, DeploymentAppLogGetResponseRegionGcpEuropeWest1, DeploymentAppLogGetResponseRegionGcpEuropeWest2, DeploymentAppLogGetResponseRegionGcpEuropeWest3, DeploymentAppLogGetResponseRegionGcpEuropeWest4, DeploymentAppLogGetResponseRegionGcpEuropeWest6, DeploymentAppLogGetResponseRegionGcpEuropeWest8, DeploymentAppLogGetResponseRegionGcpMeWest1, DeploymentAppLogGetResponseRegionGcpNorthamericaNortheast1, DeploymentAppLogGetResponseRegionGcpNorthamericaNortheast2, DeploymentAppLogGetResponseRegionGcpSouthamericaEast1, DeploymentAppLogGetResponseRegionGcpSouthamericaWest1, DeploymentAppLogGetResponseRegionGcpUsCentral1, DeploymentAppLogGetResponseRegionGcpUsEast1, DeploymentAppLogGetResponseRegionGcpUsEast4, DeploymentAppLogGetResponseRegionGcpUsEast5, DeploymentAppLogGetResponseRegionGcpUsSouth1, DeploymentAppLogGetResponseRegionGcpUsWest1, DeploymentAppLogGetResponseRegionGcpUsWest2, DeploymentAppLogGetResponseRegionGcpUsWest3, DeploymentAppLogGetResponseRegionGcpUsWest4:
+		return true
+	}
+	return false
+}
 
 type DeploymentAppLogGetParams struct {
 	// Opaque value that represents the cursor of the last log returned in the previous
@@ -195,6 +215,14 @@ const (
 	DeploymentAppLogGetParamsLevelDebug   DeploymentAppLogGetParamsLevel = "debug"
 )
 
+func (r DeploymentAppLogGetParamsLevel) IsKnown() bool {
+	switch r {
+	case DeploymentAppLogGetParamsLevelError, DeploymentAppLogGetParamsLevelWarning, DeploymentAppLogGetParamsLevelInfo, DeploymentAppLogGetParamsLevelDebug:
+		return true
+	}
+	return false
+}
+
 // Region(s) to filter logs by.
 //
 // Defaults to all regions (i.e. no filter applied).
@@ -238,3 +266,11 @@ const (
 	DeploymentAppLogGetParamsRegionGcpUsWest3                DeploymentAppLogGetParamsRegion = "gcp-us-west3"
 	DeploymentAppLogGetParamsRegionGcpUsWest4                DeploymentAppLogGetParamsRegion = "gcp-us-west4"
 )
+
+func (r DeploymentAppLogGetParamsRegion) IsKnown() bool {
+	switch r {
+	case DeploymentAppLogGetParamsRegionGcpAsiaEast1, DeploymentAppLogGetParamsRegionGcpAsiaEast2, DeploymentAppLogGetParamsRegionGcpAsiaNortheast1, DeploymentAppLogGetParamsRegionGcpAsiaNortheast2, DeploymentAppLogGetParamsRegionGcpAsiaNortheast3, DeploymentAppLogGetParamsRegionGcpAsiaSouth1, DeploymentAppLogGetParamsRegionGcpAsiaSouth2, DeploymentAppLogGetParamsRegionGcpAsiaSoutheast1, DeploymentAppLogGetParamsRegionGcpAsiaSoutheast2, DeploymentAppLogGetParamsRegionGcpAustraliaSoutheast1, DeploymentAppLogGetParamsRegionGcpAustraliaSoutheast2, DeploymentAppLogGetParamsRegionGcpEuropeCentral2, DeploymentAppLogGetParamsRegionGcpEuropeNorth1, DeploymentAppLogGetParamsRegionGcpEuropeSouthwest1, DeploymentAppLogGetParamsRegionGcpEuropeWest1, DeploymentAppLogGetParamsRegionGcpEuropeWest2, DeploymentAppLogGetParamsRegionGcpEuropeWest3, DeploymentAppLogGetParamsRegionGcpEuropeWest4, DeploymentAppLogGetParamsRegionGcpEuropeWest6, DeploymentAppLogGetParamsRegionGcpEuropeWest8, DeploymentAppLogGetParamsRegionGcpMeWest1, DeploymentAppLogGetParamsRegionGcpNorthamericaNortheast1, DeploymentAppLogGetParamsRegionGcpNorthamericaNortheast2, DeploymentAppLogGetParamsRegionGcpSouthamericaEast1, DeploymentAppLogGetParamsRegionGcpSouthamericaWest1, DeploymentAppLogGetParamsRegionGcpUsCentral1, DeploymentAppLogGetParamsRegionGcpUsEast1, DeploymentAppLogGetParamsRegionGcpUsEast4, DeploymentAppLogGetParamsRegionGcpUsEast5, DeploymentAppLogGetParamsRegionGcpUsSouth1, DeploymentAppLogGetParamsRegionGcpUsWest1, DeploymentAppLogGetParamsRegionGcpUsWest2, DeploymentAppLogGetParamsRegionGcpUsWest3, DeploymentAppLogGetParamsRegionGcpUsWest4:
+		return true
+	}
+	return false
+}
