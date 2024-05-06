@@ -12,8 +12,8 @@ import (
 	"github.com/denoland/subhosting-go/internal/apiquery"
 	"github.com/denoland/subhosting-go/internal/param"
 	"github.com/denoland/subhosting-go/internal/requestconfig"
-	"github.com/denoland/subhosting-go/internal/shared"
 	"github.com/denoland/subhosting-go/option"
+	"github.com/denoland/subhosting-go/shared"
 )
 
 // ProjectAnalyticsService contains methods and other services that help with

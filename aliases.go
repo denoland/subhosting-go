@@ -4,7 +4,7 @@ package subhosting
 
 import (
 	"github.com/denoland/subhosting-go/internal/apierror"
-	"github.com/denoland/subhosting-go/internal/shared"
+	"github.com/denoland/subhosting-go/shared"
 )
 
 type Error = apierror.Error
